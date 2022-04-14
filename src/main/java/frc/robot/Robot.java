@@ -112,56 +112,57 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() { 
     double currentTime = Timer.getFPGATimestamp() - autonStartTime;
 
-    if (currentTime > 0 && currentTime < 1.5) {
+    if (currentTime > 0.01 && currentTime < 1) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
     }
 
-    if (currentTime > .45 && currentTime < 1.5) {
+    if (currentTime > 0.01 && currentTime < 1) {
       intake.down();
     }
 
-    if (currentTime > 1.5 && currentTime < 5.20) {
+    if (currentTime > 1 && currentTime < 4.7) {
       intake.set(1);
     }
 
-    if (currentTime > 1.5 && currentTime < 3) {
+    if (currentTime > 1 && currentTime < 2.5) {
       drivetrain.getLeftMotorGroup().set(-0.4);
       drivetrain.getRightMotorGroup().set(0.4);
     }
 
-    if (currentTime > 3 && currentTime < 5.20) {
+    if (currentTime > 2.5 && currentTime < 4.7) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
       intake.set(0);
       intake.up();
     }
 
-    if (currentTime > 5.20 && currentTime < 6) {
+    if (currentTime > 4.7 && currentTime < 5.5) {
       drivetrain.getLeftMotorGroup().set(.4);
       drivetrain.getRightMotorGroup().set(.4);
     }
 
-    if (currentTime == 6) {
+    if (currentTime == 5.5) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
     }
 
+    if (currentTime > 5.5 && currentTime < 6)
+      drivetrain.getLeftMotorGroup().set(-0.4);
+      drivetrain.getRightMotorGroup().set(0.4);
+
     if (currentTime > 6 && currentTime < 7) {
+      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
-    }
-
-    if (currentTime > 7 && currentTime < 10) {
-      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
 
-    if (currentTime > 8 && currentTime < 10) {
+    if (currentTime > 9 && currentTime < 11) {
       elevator.shoot();
     }
 
-    if (currentTime == 11) {
+    if (currentTime == 12) {
       shooter.off();
       elevator.off(); 
     }
