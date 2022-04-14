@@ -238,12 +238,11 @@ public class Robot extends TimedRobot {
     
     if(xbox.getLeftTriggerAxis() > 0) {
       
-      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
+      hoodPID.activate();
       
-      turretPID.activate(
-        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+      turretPID.activate();
 
-      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
+      shooterPID.activate();
     }
       
     // Left stick Y-axis controls left climber arm
