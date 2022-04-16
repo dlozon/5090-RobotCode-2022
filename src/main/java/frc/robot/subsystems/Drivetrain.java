@@ -20,14 +20,15 @@ public class Drivetrain {
     // Constructor method
     public Drivetrain( int FLMotorID, int FRMotorID, int RLMotorID, int RRMotorID ) {
         // Initialize motors
-        this.FLMotor = new CANSparkMax(FLMotorID, MotorType.kBrushless);
-        FLMotor.restoreFactoryDefaults();
+        this.FLMotor = new CANSparkMax( FLMotorID, MotorType.kBrushless);
+        this.FLMotor.setSmartCurrentLimit(60);
         this.FRMotor = new CANSparkMax( FRMotorID, MotorType.kBrushless);
-        FRMotor.restoreFactoryDefaults();
+        this.FRMotor.setSmartCurrentLimit(60);
         this.RLMotor = new CANSparkMax( RLMotorID, MotorType.kBrushless);
-        RLMotor.restoreFactoryDefaults();
+        this.RLMotor.setSmartCurrentLimit(60);
         this.RRMotor = new CANSparkMax( RRMotorID, MotorType.kBrushless);
-        RRMotor.restoreFactoryDefaults(); 
+        this.RRMotor.setSmartCurrentLimit(60);
+
 
         // Create groups
         leftMotors = new MotorControllerGroup(FLMotor, RLMotor);
