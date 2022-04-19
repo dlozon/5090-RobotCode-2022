@@ -93,7 +93,7 @@ public class Robot extends TimedRobot {
     hoodPID = new GenericPID(hood.getMotor(), ControlType.kPosition, .25);
     hoodPID.setInputRange(0, 65);
 
-    elevator = new Elevator(13, 0, 1);
+    elevator = new Elevator(13, 1, 0);
 
     intake = new Intake(10);
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
