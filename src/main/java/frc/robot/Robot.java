@@ -86,7 +86,11 @@ public class Robot extends TimedRobot {
     robotDrive.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
     if (joystick.getTrigger() && candyMotor.getPosition() < 40) {
-      candyPID.activate(12);
+      candyMotor.setPower(1);
+    }
+
+    if (joystick.getRawButton(2)) {
+      candyPID.activate(0);
     }
   }
 
