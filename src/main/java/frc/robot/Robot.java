@@ -177,7 +177,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
-    robotDrive.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
+    robotDrive.arcadeDrive(-joystick.getRawAxis(0), -joystick.getRawAxis(1));
 
     // Joystick trigger activates motor
     if(joystick.getRawButton(6))
