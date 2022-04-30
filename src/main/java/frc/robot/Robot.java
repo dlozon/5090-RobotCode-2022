@@ -66,6 +66,7 @@ public class Robot extends TimedRobot {
   private GenericPID intakePID;
   private GenericPID slowintakePID;
   private double autonStartTime;
+  public int HN;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -92,8 +93,7 @@ public class Robot extends TimedRobot {
     shooterPID.setOutputRange(-1,1);
 
     hood = new Hood(15);
-    hoodPID = new GenericPID(hood.getMotor(), ControlType.kPosition, .25);
-    hoodPID.setInputRange(0, 65);
+    hoodPID = new GenericPID(hood.getMotor(), ControlType.kPosition, .04);
 
     elevator = new Elevator(13, 1, 0);
 
@@ -110,6 +110,8 @@ public class Robot extends TimedRobot {
     leftclimberPID.setInputRange(-240, 0);
 
     dashboard = new Dashboard();
+
+    HN = 0;
   }
 
   // This function is called once at the start of auton
@@ -179,17 +181,27 @@ public class Robot extends TimedRobot {
     // Puts the robot in arcade drive
     robotDrive.arcadeDrive(-joystick.getRawAxis(0), -joystick.getRawAxis(1));
 
-    // Joystick trigger activates motor
+    // Joystick trigger shoots candy
     if(joystick.getRawButton(6))
       intakePID.activate(0);
-    else if(joystick.getRawButton(10))
+    else if(joystick.getRawButton(2))
       intakePID.activate(2.5);
       //2.5 for 20:1
-    else if(joystick.getRawButton(11))
+    else if(joystick.getTrigger())
       intakePID.activate(6.8);
       //6.8 for 20:1
     else
       intake.motorOff();
+
+    // Joystick button 5 adds candy to 
+    
+
+    if(joystick.getRawButton(3))
+      hoodPID.activate(hood.getPosition() + 4);
+    else if(joystick.getRawButtonReleased(3))
+      hood.off();
+
+    
 
     // Manually control the turret with bumpers
     if(xbox.getLeftBumper()) {
@@ -262,12 +274,6 @@ public class Robot extends TimedRobot {
       intake.down();
     // Y button raises intake
     else if(xbox.getYButton())
-      intake.up();
-
-    // joystick controls intake state
-    if(joystick.getRawButton(3))
-      intake.down();
-    else if (joystick.getRawButton(4))
       intake.up();
 
     // Get ready to climb!
