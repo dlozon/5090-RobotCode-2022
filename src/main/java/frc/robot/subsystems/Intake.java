@@ -9,7 +9,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 public class Intake {
   // Variable Declaration
   private DoubleSolenoid dubs;
-  private CANSparkMax motor;
+  CANSparkMax motor;
 
   // Is true if the arms are up 
   // Motor should NOT move if this is true
@@ -17,18 +17,15 @@ public class Intake {
 
   // Constructor
   public Intake(int motorID) {
-    // Initialize Variables
-    this.dubs = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0, 1);
-
-    this.motor = new CANSparkMax(motorID, MotorType.kBrushless);
-
-    // Arms start in the up position
-    this.solenoidIsUp = false;
+    motor = new CANSparkMax(motorID, MotorType.kBrushless);
   }
 
   // Accessor methods
   public boolean armsAreUp() { return this.solenoidIsUp; }
   public int getMotorRPM() { return (int) Math.round(this.motor.getEncoder().getVelocity()); }
+  public double getRPM() { return motor.getEncoder().getVelocity(); }
+  public double getPosition() { return motor.getEncoder().getPosition(); }
+  public CANSparkMax getMotor() { return motor; }
 
   // Put arms up
   public void up() { dubs.set(DoubleSolenoid.Value.kForward); }

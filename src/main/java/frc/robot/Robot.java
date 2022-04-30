@@ -63,6 +63,8 @@ public class Robot extends TimedRobot {
   private GenericPID hoodPID;
   private GenericPID leftclimberPID;
   private GenericPID rightclimberPID;
+  private GenericPID intakePID;
+  private GenericPID slowintakePID;
   private double autonStartTime;
   
   // This function is run when the robot is first started up and should be used
@@ -96,6 +98,9 @@ public class Robot extends TimedRobot {
     elevator = new Elevator(13, 1, 0);
 
     intake = new Intake(10);
+    intakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .39);
+    slowintakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .02);
+
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
     climber = new Climber(11, 12, 2, 3);
@@ -175,10 +180,14 @@ public class Robot extends TimedRobot {
     robotDrive.arcadeDrive(-joystick.getRawAxis(0), joystick.getRawAxis(1));
 
     // Joystick trigger activates motor
-    if(joystick.getTrigger())
-      intake.set(1);
-    else if(joystick.getRawButton(2))
-      intake.set(-1);
+    if(joystick.getRawButton(6))
+      intakePID.activate(0);
+    else if(joystick.getRawButton(10))
+      intakePID.activate(2.5);
+      //2.5 for 20:1
+    else if(joystick.getRawButton(11))
+      intakePID.activate(6.8);
+      //6.8 for 20:1
     else
       intake.motorOff();
 
