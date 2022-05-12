@@ -8,8 +8,10 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.wrappers.GenericPID;
 import com.revrobotics.CANSparkMax.ControlType;
+import edu.wpi.first.wpilibj.AddressableLED;
 
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
@@ -65,8 +67,10 @@ public class Robot extends TimedRobot {
   private GenericPID rightclimberPID;
   private GenericPID intakePID;
   private GenericPID slowintakePID;
+  private GenericPID reloadintakePID;
   private double autonStartTime;
-  public int HN;
+  private Timer feederTimer;
+  public boolean HN;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -99,7 +103,8 @@ public class Robot extends TimedRobot {
 
     intake = new Intake(10);
     intakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .39);
-    slowintakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .02);
+    slowintakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .023);
+    reloadintakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .07);
 
     comp = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
@@ -111,7 +116,9 @@ public class Robot extends TimedRobot {
 
     dashboard = new Dashboard();
 
-    HN = 0;
+    HN = true;
+
+    feederTimer = new Timer();
   }
 
   // This function is called once at the start of auton
@@ -173,6 +180,7 @@ public class Robot extends TimedRobot {
 
     // auto compressor
     comp.enableDigital();
+
   }
 
   // This function is called every 20ms during teleop
@@ -182,18 +190,35 @@ public class Robot extends TimedRobot {
     robotDrive.arcadeDrive(-joystick.getRawAxis(0), -joystick.getRawAxis(1));
 
     // Joystick trigger shoots candy
-    if(joystick.getRawButton(6))
-      intakePID.activate(0);
-    else if(joystick.getRawButton(2))
-      intakePID.activate(2.5);
+    
+    if(joystick.getRawButton(2))
+      slowintakePID.activate(2.5);
       //2.5 for 20:1
     else if(joystick.getTrigger())
       intakePID.activate(6.8);
+    else if(joystick.getRawButton(3))
+      reloadintakePID.activate(5);
       //6.8 for 20:1
-    else
-      intake.motorOff();
+    
+    // Total displacement for a shot = 4.3
 
     // Joystick button 5 adds candy to 
+    if(joystick.getTrigger() && HN)
+      feederTimer.start();
+      intakePID.activate(4.3);
+      HN = false;
+    if(feederTimer.get() > 4 && feederTimer.get() < 5)
+      reloadintakePID.activate(2.5);
+    if(feederTimer.get() > 6 && feederTimer.get() < 10)
+      turretPID.activate(turret.getPosition() + 36);
+    if(feederTimer.get() > 12 && feederTimer.get() < 16)
+      slowintakePID.activate(0);
+    if(feederTimer.get() > 17)
+      feederTimer.stop();
+    if(joystick.getRawButton(0))
+      feederTimer.reset();
+      HN = true;
+
     
 
     if(joystick.getRawButton(3))
