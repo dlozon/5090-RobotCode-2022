@@ -88,7 +88,7 @@ public class Robot extends TimedRobot {
     limelight = new Limelight();
 
     turret = new Turret(14);
-    turretPID = new GenericPID(turret.getMotor(), ControlType.kPosition, .25);
+    turretPID = new GenericPID(turret.getMotor(), ControlType.kVelocity, .0002);
     turretPID.setInputRange(-75 * TURRET_RATIO, 75 * TURRET_RATIO);
 
 
@@ -102,7 +102,7 @@ public class Robot extends TimedRobot {
     elevator = new Elevator(13, 1, 0);
 
     intake = new Intake(10);
-    intakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .39);
+    intakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .49);
     slowintakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .023);
     reloadintakePID = new GenericPID(intake.getMotor(), ControlType.kPosition, .07);
 
@@ -189,37 +189,32 @@ public class Robot extends TimedRobot {
     // Puts the robot in arcade drive
     robotDrive.arcadeDrive(-joystick.getRawAxis(0), -joystick.getRawAxis(1));
 
-    // Joystick trigger shoots candy
-    
-    if(joystick.getRawButton(2))
-      slowintakePID.activate(2.5);
-      //2.5 for 20:1
-    else if(joystick.getTrigger())
-      intakePID.activate(6.8);
-    else if(joystick.getRawButton(3))
-      reloadintakePID.activate(5);
-      //6.8 for 20:1
-    
     // Total displacement for a shot = 4.3
 
     // Joystick button 5 adds candy to 
-    if(joystick.getTrigger() && HN)
-      feederTimer.start();
-      intakePID.activate(4.3);
-      HN = false;
-    if(feederTimer.get() > 4 && feederTimer.get() < 5)
-      reloadintakePID.activate(2.5);
-    if(feederTimer.get() > 6 && feederTimer.get() < 10)
-      turretPID.activate(turret.getPosition() + 36);
-    if(feederTimer.get() > 12 && feederTimer.get() < 16)
-      slowintakePID.activate(0);
-    if(feederTimer.get() > 17)
-      feederTimer.stop();
-    if(joystick.getRawButton(0))
+    if(joystick.getTrigger())
       feederTimer.reset();
-      HN = true;
+      feederTimer.start();
+   
+    if(feederTimer.get() > .5 && feederTimer.get() < 2)
+      intakePID.activate(5);
 
+    if(feederTimer.get() > 2 && feederTimer.get() < 3.5)
+      reloadintakePID.activate(3.14);
     
+    if(feederTimer.get() > 3.5 && feederTimer.get() < 5.8)
+      turret.setPower(.8);
+     
+    if(feederTimer.get() > 5.8 && feederTimer.get() < 6)
+       turret.setPower(0);
+      // slowintakePID.activate(0);
+     
+    if(feederTimer.get() > 7)
+      // turret.setPower(0);
+       slowintakePID.activate(0);
+      
+   
+      
 
     if(joystick.getRawButton(3))
       hoodPID.activate(hood.getPosition() + 4);
@@ -351,5 +346,7 @@ public class Robot extends TimedRobot {
     dashboard.printLeftClimberPosition(climber);
     dashboard.printRightClimberPosition(climber);
     dashboard.printLimelightData(limelight);
+    SmartDashboard.putNumber("Timer", feederTimer.get());
+    SmartDashboard.putNumber("LaunchPos", intake.getPosition());
   }
 }
