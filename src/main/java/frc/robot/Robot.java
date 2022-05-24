@@ -187,7 +187,7 @@ public class Robot extends TimedRobot {
   @Override
   public void teleopPeriodic() {
     // Puts the robot in arcade drive
-    robotDrive.arcadeDrive(-joystick.getRawAxis(0), -joystick.getRawAxis(1));
+    robotDrive.arcadeDrive(joystick.getRawAxis(1), joystick.getRawAxis(0));
 
     // Total displacement for a shot = 4.3
 
@@ -202,16 +202,18 @@ public class Robot extends TimedRobot {
     if(feederTimer.get() > 2 && feederTimer.get() < 3.5)
       reloadintakePID.activate(3.14);
     
-    if(feederTimer.get() > 3.5 && feederTimer.get() < 5.8)
+    // feeding time (kitchen is open)
+    if(feederTimer.get() > 3.5 && feederTimer.get() < 3.9)
       turret.setPower(.8);
-     
-    if(feederTimer.get() > 5.8 && feederTimer.get() < 6)
+      //hoodPID.activate(18);
+
+    if(feederTimer.get() > 3.9 && feederTimer.get() < 4.1)
        turret.setPower(0);
-      // slowintakePID.activate(0);
-     
-    if(feederTimer.get() > 7)
-      // turret.setPower(0);
+
+    // nap time (kitchen is closed)
+    if(feederTimer.get() > 5)
        slowintakePID.activate(0);
+       //hoodPID.activate(0);
       
    
       
