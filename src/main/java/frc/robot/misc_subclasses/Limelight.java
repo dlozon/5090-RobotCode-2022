@@ -22,7 +22,7 @@ public class Limelight {
 
     // Accessor methods
     public boolean hasTarget() { return this.hasValidTarget; }
-    public double getDistance() { return this.distance; }
+    public double getDistance() { return 135; }
     public double getSteer() { return this.steerCommand; }
     public double getDrive() { return this.driveCommand; }
     public double getRotationAngle() { return this.tx; }
@@ -55,8 +55,6 @@ public class Limelight {
             driveCommand = MAX_DRIVE;
 
         // Calculates horizontal distance to the target
-        distance = Math.round((
-            TARGET_HEIGHT - LIME_HEIGHT) / 
-            Math.tan(LIME_ANGLE + a2));
+        distance = 135;
     }
 }
