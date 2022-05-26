@@ -12,7 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.wrappers.GenericPID;
 import com.revrobotics.CANSparkMax.ControlType;
 import edu.wpi.first.wpilibj.AddressableLED;
-
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 // Camera imports
 import edu.wpi.first.cameraserver.CameraServer;
 
@@ -71,6 +71,10 @@ public class Robot extends TimedRobot {
   private double autonStartTime;
   private Timer feederTimer;
   public boolean HN;
+
+  private AddressableLED m_led;
+  //private AddressableLED m_led2;
+  private AddressableLEDBuffer m_ledBuffer;
   
   // This function is run when the robot is first started up and should be used
   // for any initialization code.
@@ -119,6 +123,19 @@ public class Robot extends TimedRobot {
     HN = true;
 
     feederTimer = new Timer();
+
+    m_led = new AddressableLED(1);
+    //m_led2 = new AddressableLED(1);
+
+    m_ledBuffer = new AddressableLEDBuffer(60);
+    m_led.setLength(m_ledBuffer.getLength());
+    //m_led2.setLength(m_ledBuffer.getLength());
+    
+    m_led.setData(m_ledBuffer);
+    m_led.start();
+    //m_led2.setData(m_ledBuffer);
+    //m_led2.start();
+
   }
 
   // This function is called once at the start of auton
@@ -189,6 +206,11 @@ public class Robot extends TimedRobot {
     // Puts the robot in arcade drive
     robotDrive.arcadeDrive(joystick.getRawAxis(1), joystick.getRawAxis(0));
 
+    for (var i=0; i< m_ledBuffer.getLength(); i++) {
+      m_ledBuffer.setRGB(i, 0, 0, 255);
+    }
+    m_led.setData(m_ledBuffer);
+    
     // Total displacement for a shot = 4.3
 
     // Joystick button 5 adds candy to 
