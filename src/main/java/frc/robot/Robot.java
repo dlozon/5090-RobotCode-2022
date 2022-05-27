@@ -218,17 +218,32 @@ public class Robot extends TimedRobot {
     else
       intake.motorOff();
 
-    // Manually control the turret with bumpers
-    if(xbox.getLeftBumper()) {
-      turretPID.pause();
-      turret.setPower(.3);
+    // Hood quartic regression; function of limelight distance that outputs position
+    hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
+      
+    // When limelight does not have a target, the turret will constinuously travel to left and right extrema
+    // until limelight does have a target, in which the turret will focus on the target
+    if (!(limelight.hasValidTarget) && !(TRL)) {
+      searchPID.activate(70 * TURRET_RATIO);
+      TRL = true;
     }
-    else if(xbox.getRightBumper()) {
-      turretPID.pause();
-      turret.setPower(-.3);
+      
+    else if (!(limelight.hasValidTarget) && turret.getPosition() > 28 && TRL) {
+      searchPID.activate(-70 * TURRET_RATIO);
     }
-    else if(turretPID.getP() == 0)
-      turret.off();
+
+    else if (!(limelight.hasValidTarget) && turret.getPosition() < -28) {
+      TRL = false;
+    }
+  
+    else if (limelight.hasValidTarget) {
+      turretPID.activate(
+        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+      TRL = false;
+    }
+
+    // Flywheel quadratic regression; function of limelight distance that outputs velocity
+    shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
 
     // Dpad controls
     switch(xbox.getPOV()){
@@ -241,10 +256,8 @@ public class Robot extends TimedRobot {
         rightclimberPID.activate(-65);
         break;
       case 90: // RIGHT
-        shooter.increasePowerBy(.004);
         break;
       case 270: // LEFT
-        shooter.decreasePowerBy(.004);
         break;
       default: // NOT PRESSED
         // Right trigger pushes a ball into the shooter
@@ -255,37 +268,7 @@ public class Robot extends TimedRobot {
         else
           elevator.auto();
     }
-    
-    if(xbox.getLeftTriggerAxis() > 0) {
-      
-      // Hood quartic regression; function of limelight distance that outputs position
-      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
-      
-      // When limelight does not have a target, the turret will constinuously travel to left and right extrema
-      // until limelight does have a target, in which the turret will focus on the target
-      if (!(limelight.hasValidTarget) && !(TRL)) {
-        searchPID.activate(70 * TURRET_RATIO);
-        TRL = true;
-      }
-        
-      else if (!(limelight.hasValidTarget) && turret.getPosition() > 28 && TRL) {
-        searchPID.activate(-70 * TURRET_RATIO);
-      }
-  
-      else if (!(limelight.hasValidTarget) && turret.getPosition() < -28) {
-        TRL = false;
-      }
-    
-      else if (limelight.hasValidTarget) {
-        turretPID.activate(
-          ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
-        TRL = false;
-      }
-
-      // Flywheel quadratic regression; function of limelight distance that outputs velocity
-      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
-    }
-      
+          
     // Left stick Y-axis controls left climber arm
     if(Math.abs(xbox.getLeftY()) > CLIMBER_DEADZONE ) {
       leftclimberPID.pause();
@@ -302,13 +285,6 @@ public class Robot extends TimedRobot {
     }
     else if (leftclimberPID.getP() == 0)
       climber.rightOff();
-
-    // X button lowers intake
-    if(xbox.getXButton())
-      intake.down();
-    // Y button raises intake
-    else if(xbox.getYButton())
-      intake.up();
 
     // joystick controls intake state
     if(joystick.getRawButton(3))
