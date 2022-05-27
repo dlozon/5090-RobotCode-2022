@@ -128,36 +128,66 @@ public class Robot extends TimedRobot {
     if (currentTime > 0.01 && currentTime < 1.5) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
+      intake.down();
     }
 
-    // drives backwards
+    // starts intake
+    if (currentTime > 1.5 && currentTime < 5.20) {
+      intake.set(1);
+    }
+
+    // drives forward
     if (currentTime > 1.5 && currentTime < 2.6) {
-      drivetrain.getLeftMotorGroup().set(0.4);
-      drivetrain.getRightMotorGroup().set(-0.4);
+      drivetrain.getLeftMotorGroup().set(-0.4);
+      drivetrain.getRightMotorGroup().set(0.4);
     }
 
-    // stops drive
+    // stops drive and intake
     if (currentTime > 2.6 && currentTime < 4.9) {
+      drivetrain.getLeftMotorGroup().set(0);
+      drivetrain.getRightMotorGroup().set(0);
+      intake.set(0);
+    }
+
+    // intake up
+    if (currentTime > 3.5 && currentTime < 4.7) {
+      intake.up();
+    }
+
+    // rotates counterclockwise
+    if (currentTime > 4.9 && currentTime < 6) {
+      drivetrain.getLeftMotorGroup().set(.4);
+      drivetrain.getRightMotorGroup().set(.4);
+      turretPID.activate(
+        ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+    }
+
+    // stops rotation
+    if (currentTime == 6) {
       drivetrain.getLeftMotorGroup().set(0);
       drivetrain.getRightMotorGroup().set(0);
     }
 
-    // aims hood and starts flywheel and aims turret
-    if (currentTime > 5 && currentTime < 7.5) {
-      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
+    // aims turret
+    if (currentTime > 6 && currentTime < 7) {
       turretPID.activate(
         ((turret.getPosition() / TURRET_RATIO) - limelight.getRotationAngle()) * TURRET_RATIO );
+    }
+
+    // aims hood and starts flywheel
+    if (currentTime > 7 && currentTime < 10) {
+      hoodPID.activate((.000002262119 * Math.pow(limelight.getDistance(), 4)) - (.000654706898 * Math.pow(limelight.getDistance(), 3)) + (.060942569498 * Math.pow(limelight.getDistance(), 2)) - (1.23311704654 * limelight.getDistance()) - .962075155165);
       shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
     }
 
     // shoots balls
-    if (currentTime > 7.5 && currentTime < 12) {
-      shooterPID.activate(.056650444657 * Math.pow(limelight.getDistance(), 2) + 8.50119265165 * limelight.getDistance() + 2383.56516106);
+    if (currentTime > 10 && currentTime < 12  && limelight.hasTarget()) {
       elevator.shoot();
     }
 
-    // stops elevator
+    // stops flywheel and elevator
     if (currentTime == 12) {
+      shooter.off();
       elevator.off(); 
     }
   }
