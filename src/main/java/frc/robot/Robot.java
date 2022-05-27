@@ -127,8 +127,8 @@ public class Robot extends TimedRobot {
     m_led = new AddressableLED(1);
     //m_led2 = new AddressableLED(1);
 
-    m_ledBuffer = new AddressableLEDBuffer(60);
-    m_led.setLength(m_ledBuffer.getLength());
+    m_ledBuffer = new AddressableLEDBuffer(500);
+    m_led.setLength(500);
     //m_led2.setLength(m_ledBuffer.getLength());
     
     m_led.setData(m_ledBuffer);
