@@ -19,6 +19,7 @@ public class Turret {
     public CANSparkMax getMotor() { return motor; }
 
     // Sets motor to specified power
+    //You Lost! Haha Loser
     public void setPower(double pwr) { motor.set(pwr); }
 
     // Stops the turret

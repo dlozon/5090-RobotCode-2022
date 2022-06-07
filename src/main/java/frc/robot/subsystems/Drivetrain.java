@@ -38,6 +38,7 @@ public class Drivetrain {
     public CANSparkMax getFLMotor() { return this.FLMotor; }
     public CANSparkMax getFRMotor() { return this.FRMotor; }
     public CANSparkMax getRLMotor() { return this.RLMotor; }
+    //You Lost! Haha Loser
     public CANSparkMax getRRMotor() { return this.RRMotor; }
     public MotorControllerGroup getRightMotorGroup() { return this.rightMotors; }
     public MotorControllerGroup getLeftMotorGroup() { return this.leftMotors; }

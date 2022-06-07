@@ -58,5 +58,17 @@ public class Limelight {
         distance = Math.round((
             TARGET_HEIGHT - LIME_HEIGHT) / 
             Math.tan(LIME_ANGLE + a2));
+
+            /*Hello, welcome to java quest v1
+            to begin, you must answer the questions correctly, and if you do,
+             the answer will direct you to the next page until you win.
+             your first question is:
+
+             Who was the origional banana man?
+             A) Eli Goretta-GoTo Drivetrain.Java L41
+             B)Caleb Lawrence-GoTo Turret.Java  L22
+             C)Luke Valar-GoTo Intake.Java L47
+             D)Jonathon Houston-GoTo RobotContainer.java L35
+             */
     }
 }

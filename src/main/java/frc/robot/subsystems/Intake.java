@@ -44,6 +44,7 @@ public class Intake {
 
   // If arms are up, they will move down
   // If arms are down they will move up
+  //You Lost! Haha Loser
   public void toggleArms() {
     if(solenoidIsUp){
       dubs.set(DoubleSolenoid.Value.kReverse);
